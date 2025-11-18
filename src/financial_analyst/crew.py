@@ -15,11 +15,6 @@ llm = LLM(
     base_url="http://192.168.2.82:11434/v1",
 )
 
-# coder_llm = LLM(
-#     model="qwen3-coder:30b-a3b-instruct-q4_k_m",
-#     base_url="http://192.168.2.82:11434/v1",
-# )
-
 
 @CrewBase
 class FinancialAnalyst:
