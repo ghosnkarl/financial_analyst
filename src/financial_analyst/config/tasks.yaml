@@ -1,0 +1,71 @@
+process_and_standardize_transactions:
+  description: >
+    Process all transactions from the CSV file at {csv_path}.
+
+    Step 1: Use the Schema Mapper Tool to analyze the CSV structure and identify columns.
+    Step 2: Use the Batch Processor Tool to transform all transactions into standardized format.
+
+    The Batch Processor Tool will automatically:
+    - Detect the CSV structure using the schema mapper
+    - Process all transactions
+    - Extract the transaction type (expense or income) from the CSV's type column
+    - Save the output to output/transactions.json with fields: date, description, amount, merchant, category, and type
+
+    Use both tools in sequence with csv_path: {csv_path}
+  expected_output: >
+    Confirmation that all transactions have been processed and saved to output/transactions.json.
+    Include the total number of transactions processed. Each transaction should include the type field (expense or income).
+  agent: transaction_processor_agent
+
+generate_visualization_charts:
+  description: >
+    Generate visualization charts from the processed transaction data.
+
+    Use the Visualization Tool to create 4 financial charts:
+    - Spending by category (bar chart)
+    - Spending over time (line chart)
+    - Top 10 expenses (horizontal bar chart)
+    - Income vs expenses comparison (bar chart)
+
+    Call the tool with json_path: "output/transactions.json"
+
+  expected_output: >
+    Confirmation message that the visualization charts have been successfully generated,
+    including the names of all 4 chart files created in the output directory.
+  agent: visualization_agent
+  context:
+    - process_and_standardize_transactions
+
+analyze_transactions:
+  description: >
+    Analyze the transaction data from {file_path} and extract key insights.
+    Use the CSV Analyzer Tool with the csv_path parameter: {file_path}
+    The tool accepts both JSON and CSV files and will provide comprehensive analysis.
+
+    IMPORTANT: Include the generated visualization charts in the report.
+    Reference these chart images in the markdown using relative paths:
+    - ![Spending by Category](spending_by_category.png)
+    - ![Spending Over Time](spending_over_time.png)
+    - ![Top Expenses](top_expenses.png)
+    - ![Income vs Expenses](income_vs_expenses.png)
+  expected_output: >
+    A clean, professional markdown report with proper formatting.
+
+    IMPORTANT FORMATTING RULES:
+    - Start directly with the main heading (# Financial Transaction Analysis Report)
+    - Use proper markdown headings (##, ###, ####) to structure sections
+    - Use bullet points (-) for lists, not asterisks
+    - Use **bold** for emphasis on labels and key terms
+    - DO NOT include any code blocks, code fences (```), or horizontal rules (===, ---)
+    - Format all dates in human-readable format (e.g., "January 1, 2024" not "2024-01-01")
+    - Format all currency values with dollar signs and commas (e.g., "$1,234.56")
+    - Include sections: Summary Statistics, Visualizations (with all 4 charts), Spending Trends, Category & Merchant Breakdown, Recurring Transactions, Anomaly Detection
+    - DO NOT include a Recommendations section
+    - Keep the tone professional and insights purely factual
+    - Embed the visualization charts in a dedicated "Visualizations" section near the top of the report
+
+    The report should flow naturally and be easy to read in any markdown viewer.
+  agent: data_analyst_agent
+  output_file: output/analyze_transactions.md
+  context:
+    - process_and_standardize_transactions
